@@ -30,7 +30,7 @@ app.use('/', routes);
 
 // connect to the mongoDB
 mongoose.connect(
-    'mongodb+srv://root:abcdefgh@cluster0.spcvd.gcp.mongodb.net/zomato?retryWrites=true&w=majority', 
+    'mongodb+srv://mkoner:mkonermongo@cluster0.kenhj.mongodb.net/zomato?retryWrites=true&w=majority', 
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
