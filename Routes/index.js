@@ -26,4 +26,4 @@ router.get('/getMenuByRestaurant/:restaurantId', menuController.getMenuForRestau
 
 
 // export the router
-module.exports = router;
+module.exports = router; 

@@ -102,28 +102,11 @@ exports.filterRestaurants = (req, res) => {
 
     Restaurant.find(filters).sort({ min_price: sort }).then(result => {
 
-        // Assignment: 6 write a logic to paginate the results:
-        /*
-        -> suppose after filtering we get 5 results.
-        -> but as per out design we only show 2 results on one page.
-        -> which means
-            for page no 1 : I need to show the first two results i.e.  result[0] and result[1]
-            for page no 2 : I need to show the 3rd and 4th results i.e.  result[2] and result[3]
-            for page no 3 : I need to show the 5th and the final result i.e.  result[4]
-        */
-
         const pageSize = 2;
         let tempArray = [];
 
         function paginate(arr, page_size, page_no) {
             let paginatedResult = [];
-            // Learner Task: TODO: Logic, use array slice method on arr
-            // we will use slice method
-            /*
-                example: page_size: 2, page_no: 4
-                arr.slice((4 - 1) * 2, 4 * 2); 
-                arr.slice(6, 8); //  arr[6], arr[7]
-            */
             paginatedResult = arr.slice((page_no - 1) * page_size, page_no * page_size);  
             return paginatedResult;
         }
