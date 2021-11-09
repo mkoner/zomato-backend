@@ -4,17 +4,31 @@ require('dotenv').config();
 const formidable = require('formidable');
 const https = require('https');
 const { v4: uuidv4 } = require('uuid');
+const Order = require('../Models/Orders')
+
+
 
 // import the paytmChecksum to authenticate the payment requests
 const PaytmChecksum = require('./PaytmChecksum');
+
+
+let details;
 
 
 exports.payments = (req, res) => {
     const {
         amount,
         email,
-        mobileNo
+        mobileNo,
+        items
     } = req.body;
+
+    details = {
+        amount:amount,
+        email: email,
+        mobileNo: mobileNo,
+        items:items
+    }
 
     // prepare the request Object
     let params = {
@@ -29,7 +43,7 @@ exports.payments = (req, res) => {
         MOBILE_NO: mobileNo.toString(),
         CALLBACK_URL: 'http://localhost:5454/paymentCallback'
     };
-
+        
     // use paytmchecksum to generate a signature
     let paytmChecksum = PaytmChecksum.generateSignature(params, process.env.PAYTM_MERCHANT_KEY);
 
@@ -49,14 +63,15 @@ exports.payments = (req, res) => {
 
 exports.paymentsCallback = (req, res) => {
     // it is called by paytm system, Paytm server will send the transaction status here
-    // we need to read this transaction details
+    // we need to read this transaction 
+    const {email,amount,mobileNo,items}=details;
 
     try {
 
         const form = new formidable.IncomingForm();
 
         form.parse(req, (error, fields, file) => {
-
+        
             // check if it is an error or not
             if (error) {
                 console.log(error);
@@ -101,14 +116,28 @@ exports.paymentsCallback = (req, res) => {
                                     // transaction is successfull
                                     // zomato BE will inform the zomato FE
 
-                                    // TODO: Learner Task: save the order details and transaction status to the Database
-                                    res.sendFile(__dirname + '/txn_success.html');
+                                    const orderObj= new Order ({
+                                        amount:amount,
+                                        email: email,
+                                        items:items,
+                                        paymentSuccess : true,
+                                        mobileNo: mobileNo
+                                    })
+
+                                    orderObj.save().then(res.sendFile(__dirname + '/txn_success.html'))
                                 } else {
                                     // transaction in failure
                                     // zomato BE will inform the zomato FE
-                                    
-                                    // TODO: Learner Task: save the order details and transaction status to the Database
-                                    res.sendFile(__dirname + '/txn_failure.html');
+                                
+                                    const orderObj= new Order ({
+                                        amount:amount,
+                                        email: email,
+                                        items:items,
+                                        paymentSuccess : false,
+                                        mobileNo: mobileNo
+                                    })
+
+                                    orderObj.save().then(res.sendFile(__dirname + '/txn_failure.html'))
                                 }
                             });
                         });
@@ -130,4 +159,4 @@ exports.paymentsCallback = (req, res) => {
     } catch (e) {
         res.sendFile(__dirname, + '/txn_failure.html');
     }
-}
+} 

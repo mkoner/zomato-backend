@@ -61,3 +61,17 @@ exports.signup = (req, res) => {
         });
     });
 }
+
+exports.getAllUsers = (req,res)=> {
+    User.find().then(result=>{
+        res.status(200).json({
+            message: "users fetched",
+            users: result
+        })
+    }).catch(error=>{
+        res.status(500).json({
+            message: "error fetching users",
+            error:error
+        })
+    })
+}

@@ -22,7 +22,8 @@ router.post('/login', userController.login);
 router.post('/signup', userController.signup);
 router.post('/payment', paymentController.payments);
 router.post('/paymentCallback', paymentController.paymentsCallback);
-router.get('/getMenuByRestaurant/:restaurantId', menuController.getMenuForRestaurant)
+router.get('/getMenuByRestaurant/:restaurantId', menuController.getMenuForRestaurant);
+router.get('/getAllUsers', userController.getAllUsers);
 
 
 // export the router
